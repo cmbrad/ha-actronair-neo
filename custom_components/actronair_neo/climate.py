@@ -109,6 +109,8 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
                 "HIGH": FAN_HIGH,
                 "AUTO": FAN_AUTO
             }
+
+            _LOGGER.debug("CB - Supported modes: %s - %s - %s", model, self.coordinator.data["main"].get("supported_fan_modes", 0), supported_modes)
             
             available_modes = []
             for mode in supported_modes:
@@ -136,7 +138,7 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
     @property
     def target_temperature(self) -> float | None:
         """Return the temperature we try to reach."""
-        if self.hvac_mode == HVACMode.COOL:
+        if self.hvac_mode in [HVACMode.COOL, HVACMode.HEAT_COOL]:
             return self.coordinator.data["main"]["temp_setpoint_cool"]
         elif self.hvac_mode == HVACMode.HEAT:
             return self.coordinator.data["main"]["temp_setpoint_heat"]
