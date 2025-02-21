@@ -402,18 +402,20 @@ class ActronZoneClimate(ActronEntityBase, ClimateEntity):
     @property
     def target_temperature_high(self) -> float | None:
         """Return the high target temperature."""
-        if not (self._has_temp_control and self._has_separate_targets):
-            return None
-
-        return self.coordinator.data['zones'][self.zone_id]["temp_setpoint_cool"]
-
-    @property
-    def target_temperature_low(self) -> float | None:
-        """Return the low target temperature."""
+        _LOGGER.debug('CB - TEMP CONTROL HIGH!!! %s - %s - %s', self._has_temp_control, self._has_separate_targets, self.coordinator.data['zones'][self.zone_id]["temp_setpoint_heat"])
         if not (self._has_temp_control and self._has_separate_targets):
             return None
 
         return self.coordinator.data['zones'][self.zone_id]["temp_setpoint_heat"]
+
+    @property
+    def target_temperature_low(self) -> float | None:
+        """Return the low target temperature."""
+        _LOGGER.debug('CB - TEMP CONTROL HIGH!!! %s - %s - %s', self._has_temp_control, self._has_separate_targets, self.coordinator.data['zones'][self.zone_id]["temp_setpoint_cool"])
+        if not (self._has_temp_control and self._has_separate_targets):
+            return None
+
+        return self.coordinator.data['zones'][self.zone_id]["temp_setpoint_cool"]
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
