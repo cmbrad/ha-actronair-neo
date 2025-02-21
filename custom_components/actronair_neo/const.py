@@ -161,7 +161,8 @@ ADVANCE_SERIES_MODELS: Final[frozenset[str]] = frozenset({
     "CRV15AT", "EVV15AS", 
     "CRV17AT", "EVV17AS", 
     "CRV210T", "EVV210S", 
-    "CRV240T", "EVV240S"
+    "CRV240T", "EVV240S",
+    "NTW", "NTW-1000",
 })
 
 AIRES_SERIES_MODELS: Final[frozenset[str]] = frozenset({
