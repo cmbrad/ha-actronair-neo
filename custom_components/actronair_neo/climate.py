@@ -38,7 +38,7 @@ from .coordinator import ActronDataCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-HVAC_MODES = [HVACMode.OFF, HVACMode.COOL, HVACMode.HEAT, HVACMode.FAN_ONLY, HVACMode.AUTO]
+HVAC_MODES = [HVACMode.OFF, HVACMode.COOL, HVACMode.HEAT, HVACMode.FAN_ONLY, HVACMode.HEAT_COOL]
 FAN_MODES = [FAN_LOW, FAN_MEDIUM, FAN_HIGH, FAN_AUTO]
 
 FAN_MODE_MAP = {
@@ -169,7 +169,7 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
         temperature = kwargs.get(ATTR_TEMPERATURE)
         if temperature is None:
             return
-        is_cooling = self.hvac_mode in [HVACMode.COOL, HVACMode.AUTO]
+        is_cooling = self.hvac_mode in [HVACMode.COOL, HVACMode.HEAT_COOL]
         await self.coordinator.set_temperature(temperature, is_cooling)
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
@@ -249,7 +249,7 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
     def _actron_to_ha_hvac_mode(self, mode: str) -> HVACMode:
         """Convert Actron HVAC mode to HA HVAC mode."""
         mode_map = {
-            "AUTO": HVACMode.AUTO,
+            "AUTO": HVACMode.HEAT_COOL,
             "HEAT": HVACMode.HEAT,
             "COOL": HVACMode.COOL,
             "FAN": HVACMode.FAN_ONLY,
@@ -260,7 +260,7 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
     def _ha_to_actron_hvac_mode(self, mode: HVACMode) -> str:
         """Convert HA HVAC mode to Actron HVAC mode."""
         mode_map = {
-            HVACMode.AUTO: "AUTO",
+            HVACMode.HEAT_COOL: "AUTO",
             HVACMode.HEAT: "HEAT",
             HVACMode.COOL: "COOL",
             HVACMode.FAN_ONLY: "FAN",
@@ -318,7 +318,7 @@ class ActronZoneClimate(ActronEntityBase, ClimateEntity):
 
         # Set up basic attributes
         self._attr_temperature_unit = UnitOfTemperature.CELSIUS
-        self._attr_hvac_modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.HEAT, HVACMode.AUTO]
+        self._attr_hvac_modes = [HVACMode.OFF, HVACMode.COOL, HVACMode.HEAT, HVACMode.HEAT_COOL]
         self._attr_min_temp = MIN_TEMP
         self._attr_max_temp = MAX_TEMP
 
@@ -512,7 +512,7 @@ class ActronZoneClimate(ActronEntityBase, ClimateEntity):
     def _actron_to_ha_hvac_mode(self, mode: str) -> HVACMode:
         """Convert Actron HVAC mode to HA HVAC mode."""
         mode_map = {
-            "AUTO": HVACMode.AUTO,
+            "AUTO": HVACMode.HEAT_COOL,
             "HEAT": HVACMode.HEAT,
             "COOL": HVACMode.COOL,
             "FAN": HVACMode.FAN_ONLY,
@@ -523,7 +523,7 @@ class ActronZoneClimate(ActronEntityBase, ClimateEntity):
     def _ha_to_actron_hvac_mode(self, mode: HVACMode) -> str:
         """Convert HA HVAC mode to Actron HVAC mode."""
         mode_map = {
-            HVACMode.AUTO: "AUTO",
+            HVACMode.HEAT_COOL: "AUTO",
             HVACMode.HEAT: "HEAT",
             HVACMode.COOL: "COOL",
             HVACMode.FAN_ONLY: "FAN",

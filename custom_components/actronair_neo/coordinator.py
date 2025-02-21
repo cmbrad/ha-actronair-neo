@@ -379,12 +379,10 @@ class ActronDataCoordinator(DataUpdateCoordinator):
                 if modes & 4:
                     supported.append("HIGH")
                     _LOGGER.debug("Added HIGH mode (bit 2 set)")
-                if modes & 8:
+                if modes & 4 or modes & 8:
                     auto_enabled = False
                     if hasattr(self, 'data') and self.data is not None:
-                        indoor_unit = self.data.get("raw_data", {}).get("lastKnownState", {}).get(
-                            f"<{self.device_id.upper()}>", {}
-                        ).get("AirconSystem", {}).get("IndoorUnit", {})
+                        indoor_unit = self.data.get("raw_data", {}).get("lastKnownState", {}).get("AirconSystem", {}).get("IndoorUnit", {})
                         auto_enabled = indoor_unit.get("NV_AutoFanEnabled", False)
                     if auto_enabled:
                         supported.append("AUTO")
