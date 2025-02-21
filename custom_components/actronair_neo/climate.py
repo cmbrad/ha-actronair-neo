@@ -177,10 +177,19 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
     async def async_set_temperature(self, **kwargs: Any) -> None:
         """Set new target temperature."""
         temperature = kwargs.get(ATTR_TEMPERATURE)
-        if temperature is None:
-            return
-        is_cooling = self.hvac_mode in [HVACMode.COOL, HVACMode.HEAT_COOL]
-        await self.coordinator.set_temperature(temperature, is_cooling)
+
+        target_high = kwargs.get('target_temp_high')
+        target_low = kwargs.get('target_temp_low')
+
+        _LOGGER.debug('low=%s,high=%s,regular=%s', target_low, target_high, temperature)
+
+        if target_low is not None and target_high is not None:
+            await self.coordinator.set_temperature(target_low, True)
+            await self.coordinator.set_temperature(target_high, False)
+
+        if temperature is not None:
+            await self.coordinator.set_temperature(temperature, self.hvac_mode in [HVACMode.COOL])
+            return None
 
     async def async_set_hvac_mode(self, hvac_mode: HVACMode) -> None:
         """Set new target hvac mode."""
