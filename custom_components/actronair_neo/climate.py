@@ -86,7 +86,7 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
         self._attr_min_temp = MIN_TEMP
         self._attr_max_temp = MAX_TEMP
         self._attr_supported_features = (
-            ClimateEntityFeature.TARGET_TEMPERATURE
+            ClimateEntityFeature.TARGET_TEMPERATURE_RANGE
             | ClimateEntityFeature.FAN_MODE
             | ClimateEntityFeature.TURN_ON
             | ClimateEntityFeature.TURN_OFF
@@ -143,6 +143,14 @@ class ActronClimate(ActronEntityBase, ClimateEntity):
         elif self.hvac_mode == HVACMode.HEAT:
             return self.coordinator.data["main"]["temp_setpoint_heat"]
         return None
+
+    @property
+    def target_temperature_high(self) -> float | None:
+        return self.coordinator.data["main"]["temp_setpoint_heat"]
+
+    @property
+    def target_temperature_low(self) -> float | None:
+        return self.coordinator.data["main"]["temp_setpoint_cool"]
 
     @property
     def hvac_mode(self) -> HVACMode:
@@ -334,9 +342,10 @@ class ActronZoneClimate(ActronEntityBase, ClimateEntity):
         features = ClimateEntityFeature.TURN_ON | ClimateEntityFeature.TURN_OFF
 
         if self._has_temp_control:
-            features |= ClimateEntityFeature.TARGET_TEMPERATURE
             if self._has_separate_targets:
                 features |= ClimateEntityFeature.TARGET_TEMPERATURE_RANGE
+            else:
+                features |= ClimateEntityFeature.TARGET_TEMPERATURE
 
         self._attr_supported_features = features
 
@@ -411,7 +420,7 @@ class ActronZoneClimate(ActronEntityBase, ClimateEntity):
     @property
     def target_temperature_low(self) -> float | None:
         """Return the low target temperature."""
-        _LOGGER.debug('CB - TEMP CONTROL HIGH!!! %s - %s - %s', self._has_temp_control, self._has_separate_targets, self.coordinator.data['zones'][self.zone_id]["temp_setpoint_cool"])
+        _LOGGER.debug('CB - TEMP CONTROL LOW!!! %s - %s - %s', self._has_temp_control, self._has_separate_targets, self.coordinator.data['zones'][self.zone_id]["temp_setpoint_cool"])
         if not (self._has_temp_control and self._has_separate_targets):
             return None
 
